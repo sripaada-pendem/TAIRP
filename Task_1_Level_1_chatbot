@@ -1,1 +1,38 @@
+def process_input(user_input):
+    tokens = user_input.lower().split()
+    intent = detect_intent(tokens)
+
+    entities = extract_entities(tokens)
+    return intent, entities
+
+def detect_intent(tokens):
+
+    if any(token in ["hello", "hi"] for token in tokens):
+        return "greet"
+    elif any(token in ["bye", "goodbye"] for token in tokens):
+        return "goodbye"
+    else:
+        return "unknown"
+
+def extract_entities(tokens):
+
+    entities = [token for token in tokens if token.isalpha()]
+
+    return entities
+
+def generate_response(intent, entities):
+    if intent == "greet":
+        return "Hello! How can I help you today?"
+    elif intent == "goodbye":
+        return "Goodbye! Have a great day!"
+    else:
+        return "I'm not sure how to respond to that."
+
+# Main loop
+while True:
+    # Getting the user input
+    user_input = input("You: ")
+    intent, entities = process_input(user_input)
+    response = generate_response(intent, entities)
+    print("Bot:", response)
 
