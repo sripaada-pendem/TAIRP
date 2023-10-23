@@ -1,0 +1,49 @@
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+from PIL import Image, ImageOps
+import matplotlib.pyplot as plt  # Import Matplotlib
+
+# Load and prepare the MNIST dataset
+mnist = keras.datasets.mnist
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+train_images, test_images = train_images / 255.0, test_images / 255.0
+
+# Build a simple feedforward neural network model
+model = keras.Sequential([
+    keras.layers.Flatten(input_shape=(28, 28)),
+    keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dropout(0.2),
+    keras.layers.Dense(10, activation='softmax')
+])
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+# Train the model
+model.fit(train_images, train_labels, epochs=5)
+
+# Function to predict a digit from an image
+def predict_digit(image_path):
+    # Load the image, convert it to grayscale, and resize it to 28x28
+    img = Image.open(image_path)
+    img = ImageOps.grayscale(img)
+    img = img.resize((28, 28))
+
+    # Convert the image to a NumPy array
+    img_array = np.array(img) / 255.0
+
+    # Make a prediction
+    predictions = model.predict(np.array([img_array]))
+    digit = np.argmax(predictions[0])
+    return digit
+
+# Example: Provide the path to an image of a handwritten digit
+image_path = r"C:\Users\SINDHU\OneDrive\Desktop\1234.jpg"
+predicted_digit = predict_digit(image_path)
+print(f"Predicted digit: {predicted_digit}")
+
+# Display the image using Matplotlib
+img = Image.open(image_path)
+plt.imshow(img, cmap='gray')
+plt.title(f"Predicted digit: {predicted_digit}")
+plt.show()
